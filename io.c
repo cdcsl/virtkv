@@ -6,8 +6,6 @@
 #include <linux/random.h>
 #include <linux/sched/clock.h>
 
-#include "demand/include/demand_settings.h"
-#include "demand/d_type.h"
 #include "nvmev.h"
 #include "nvme_kv.h"
 #include "dma.h"
@@ -103,7 +101,6 @@ static unsigned int __do_perform_io_kv(int sqid, int sq_entry)
             real_vlen = *(uint32_t*) (ptr + 
                     sizeof(uint8_t) + klen);
             NVMEV_ASSERT(real_vlen > 0);
-            NVMEV_ASSERT(real_vlen < 1024);
             length = real_vlen + sizeof(uint32_t);
         }
     } else if(write) {
@@ -307,7 +304,6 @@ static unsigned int __do_perform_io_kv(int sqid, int sq_entry)
         //    //NVMEV_INFO("Returning length %u in io_kv\n", real_vlen);
         //}
         NVMEV_ASSERT(real_vlen > 0); 
-        NVMEV_ASSERT(real_vlen < 1024);
         return real_vlen;
     } else if(write || orig_len == 0) {
         ptr = (void*) cmd->kv_store.rsvd;

@@ -35,7 +35,6 @@ int rb_push(struct ring_buffer *rb, struct cmt_struct *data) {
     //spin_lock_irqsave(&rb->lock, flags);
 
     if (rb_is_full(rb)) {
-        NVMEV_ASSERT(false);
         //spin_unlock_irqrestore(&rb->lock, flags);
         return -1; // Buffer is full
     }
