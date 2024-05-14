@@ -3017,7 +3017,7 @@ uint64_t __get_one(struct demand_shard *shard, struct ht_section *ht,
 }
 
 uint32_t prev_ch = 0;
-static uint64_t __read_and_compare(struct demand_shard *shard, ppa_t grain,
+static uint64_t __retrieve_and_compare(struct demand_shard *shard, ppa_t grain,
                                    void* mem, struct hash_params *h_params, 
                                    char *key_from_user, uint32_t u_klen,
                                    uint64_t stime, uint64_t *nsecs) {
@@ -3118,7 +3118,7 @@ uint64_t __release_map(void *voidargs, uint64_t* a, uint64_t* b) {
     return 0;
 }
 
-static bool __read(struct nvmev_ns *ns, struct nvmev_request *req, 
+static bool __retrieve(struct nvmev_ns *ns, struct nvmev_request *req, 
                    struct nvmev_result *ret, bool for_del) {
     struct demand_shard *demand_shards = (struct demand_shard *)ns->ftls;
     struct nvme_kv_command *cmd = (struct nvme_kv_command*) req->cmd;
@@ -3220,7 +3220,7 @@ cache:
             shard->stats.d_read_on_read += spp->pgsz;
             old_mem = ht->pair_mem[OFFSET(lpa)];
 
-            if(__read_and_compare(shard, g_from_pte, old_mem, &h, 
+            if(__retrieve_and_compare(shard, g_from_pte, old_mem, &h, 
                                   cmd->kv_store.key, klen,
                                   nsecs_latest, &nsecs_completed)) {
                 nsecs_latest = max(nsecs_latest, nsecs_completed);
@@ -3312,13 +3312,13 @@ out:
 
 static bool conv_read(struct nvmev_ns *ns, struct nvmev_request *req, struct nvmev_result *ret)
 {
-    return __read(ns, req, ret, false);
+    return __retrieve(ns, req, ret, false);
 }
 
 static bool conv_delete(struct nvmev_ns *ns, struct nvmev_request *req, 
                         struct nvmev_result *ret)
 {
-    return __read(ns, req, ret, true);
+    return __retrieve(ns, req, ret, true);
 }
 
 struct ppa cur_page;
@@ -3610,7 +3610,7 @@ cache:
             shard->stats.d_read_on_write += spp->pgsz;
             old_mem = ht->pair_mem[OFFSET(lpa)];
 
-            if(__read_and_compare(shard, g_from_pte, old_mem, &h, 
+            if(__retrieve_and_compare(shard, g_from_pte, old_mem, &h, 
                                   cmd->kv_retrieve.key, klen, 
                                   nsecs_latest, &nsecs_completed)) {
                 nsecs_latest = max(nsecs_latest, nsecs_completed);

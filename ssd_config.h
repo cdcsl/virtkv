@@ -236,7 +236,7 @@ static_assert((ZONE_SIZE % DIES_PER_ZONE) == 0);
 /*
  * Undefine for Plus.
  */
-#undef ORIGINAL
+#define ORIGINAL
 
 #ifdef ORIGINAL
 #define PIECE 512
